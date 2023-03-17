@@ -2,6 +2,8 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>TAI | Komentarze</title>
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -26,15 +28,13 @@
             margin: 0 auto;
         }
 
-        .footer-button {
-            background-color: transparent;
-            float: right;
-            margin-top: 3%;
+        .box {
+            display: flex;
+            justify-content: center;
         }
 
-        table {
-            max-width: 800px;
-            margin: 0 auto;
+        .box-footer {
+            float: right;
         }
     </style>
 </head>
@@ -45,52 +45,35 @@
         <div class="title">
             <h3>Księga komentarzy</h3>
         </div>
-        @auth
-        <table data-toggle="table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Użytkownik</th>
-                    <th>Data dodania</th>
-                    <th>Komentarz</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($comments as $comment)
-                <tr>
-                    <td>{{$comment->id}}</td>
-                    <td>{{$comment->user->name}}</td>
-                    <td>{{$comment->created_at}}</td>
-                    <td>
-                        <p>
-                            {{$comment->message}}
-                        </p>
-                    </td>
-                    <td>
-                    @if($comment->user_id == \Auth::user()->id)
-                    <a href="{{ route('edit', $comment) }}" class="btn btn-success btn-xs"
- title="Edytuj"> Edytuj </a>
-                <a href="{{ route('delete', $comment->id) }}" class="btn btn-danger btn-xs" onclick="return confirm('Jesteś pewien?')" title="Skasuj"> Usuń
-                </a>
-                @endif
-                    </td> 
-                </tr>
-                
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
                 @endforeach
-            </tbody>
-        </table>
-        <div class="footer-button">
-            <a href="{{ route('create') }}" class="btn btn-secondary">Dodaj</a>
+            </ul>
         </div>
-        <br>
-        @endauth
+        @endif
+        <div class="box box-primary ">
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form role="form" id="comment-form" method="post" action="{{ route('update', $comment) }}">
+                {{ csrf_field() }}
+                <input name="_method" type="hidden" value="PUT">
+                <div class="box">
+                    <div class="box-body">
+                        <div class="form-group{{ $errors->has('message') ? ' has-error' : '' }}" id="roles_box">
+                            <label><b>Treść</b></label><br>
+                            <textarea name="message" id="message" cols="30" rows="10" required>{{$comment->message}}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <button type="submit" class="btn btn-success">Zapisz</button>
+                </div>
+            </form>
+        </div>
     </div>
-
-    @guest
-    <div class="table-container">
-        <b>Zaloguj się aby przejrzeć komentarze.</b>
-    </div>
-    @endguest
 </body>
 
 </html>
