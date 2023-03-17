@@ -9,7 +9,7 @@ const poniedzialek = [
     }
 ]
 
-let wtorek = [
+const wtorek = [
     {
         'nazwa': 'Rozbudowa swojego bloga',
         'czas': 240
@@ -25,7 +25,10 @@ let wtorek = [
 ]
 
 console.log(
-poniedzialek.reduce((acc,el) => [...acc,el],    //This line is stupid, I know
+poniedzialek.reduce((acc,el) => {
+    acc.push(el)
+    return acc
+},    //This line is stupid, I know
 wtorek)
 .map(el => {
     el.czas /= 60
