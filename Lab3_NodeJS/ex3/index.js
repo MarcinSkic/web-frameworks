@@ -1,5 +1,6 @@
 const http = require('http')
 const fs = require('fs')
+const url = require('url')
 const port = 3000
 
 function serveStaticFile(res, path, contentType, responseCode = 200){
@@ -14,7 +15,9 @@ function serveStaticFile(res, path, contentType, responseCode = 200){
 }
 
 const server = http.createServer((req,res) => {
-    switch(req.url){
+    let site = url.parse(req.url,true).pathname
+    console.log(site)
+    switch(site){
         case '/':
             serveStaticFile(res,"/public/home.html",'text/html');
             break;

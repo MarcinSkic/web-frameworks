@@ -3,7 +3,7 @@ const { parse } = require('path')
 const url = require('url')
 
 http.createServer(function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/html' })
+    res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' })
     //This line is unnecessarily complicated but I love it!
     let {a,b,c} = (({a,b,c}) => ({a: +a, b: +b, c: +c}))(url.parse(req.url, true).query) 
     
@@ -14,7 +14,7 @@ http.createServer(function (req, res) {
     if(Number.isNaN(p)){
         txt = "Podano nie poprawne argumenty";
     } else {
-        txt = `Trojkat o bokach ${a} ${b} ${c} ma pole = ${area}`;
+        txt = `Trójkąt o bokach ${a} ${b} ${c} ma pole = ${area}`;
     }
     
     res.end(txt)
