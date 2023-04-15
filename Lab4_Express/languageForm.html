@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <form action="/languageForm" method="POST">
+            <label>Imię i nazwisko: </label>
+            <input type="text" name="fullname" /> <br />
+            <span>Języki:</span>
+            <input
+                type="checkbox"
+                name="language"
+                value="russian"
+                id="russian"
+            />
+            <label for="russian">Rosyjski</label>
+            <input
+                type="checkbox"
+                name="language"
+                value="english"
+                id="english"
+            />
+            <label for="english">Angielski</label>
+            <input type="checkbox" name="language" value="german" id="german" />
+            <label for="german">Niemiecki</label>
+            <input type="submit" name="submit" value="Wyślij" />
+        </form>
+    </body>
+</html>
