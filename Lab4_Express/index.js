@@ -8,7 +8,6 @@ import apiRouter from "./api/routes.js";
 import metoda, { ex16 } from "./middleware/metoda.js";
 import isAuthorized from "./middleware/autoryzacja.js";
 import getDate from "./server-files/getDate.js";
-import basicAuth from "express-basic-auth";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -130,6 +129,27 @@ app.post(
 
 //--------------------BASIC API----------------------
 app.use("/api/users", apiRouter);
+
+//-------------------ANGLES----------------------
+app.get("/angles", (req, res) => {
+    const value = Number.parseFloat(req.query.value);
+
+    if (Number.isNaN(value)) {
+        res.send("Given value is not a number");
+        return;
+    }
+
+    if (req.query.toRad === "true") {
+        res.send(`${value} stopni to ${(value * Math.PI) / 180} radianów`);
+    } else {
+        res.send(`${value} radianów to ${(value * 180) / Math.PI} stopni`);
+    }
+});
+
+//-------------------BACKGROUND-------------------
+app.get("/background/:bg", (req, res) => {
+    res.render("customBackground", { color: req.params.bg });
+});
 
 //---------------------START--------------------
 app.listen(PORT, () => {
