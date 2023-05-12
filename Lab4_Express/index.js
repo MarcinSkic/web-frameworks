@@ -4,7 +4,10 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import bodyParser from "body-parser";
 import { check, validationResult } from "express-validator";
-import users from "./users.js";
+import apiRouter from "./api/routes.js";
+import metoda from "./middleware/metoda.js";
+import isAuthorized from "./middleware/autoryzacja.js";
+import basicAuth from "express-basic-auth";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,6 +16,22 @@ const PORT = 3000;
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+//--------------------MIDDLEWARE--------------------------
+
+app.use(metoda);
+
+//------------------AUTHORIZATION------------------------------
+// app.use(
+//     basicAuth({
+//         authorizer: (user, password) => {
+//             return password === "secretpaswd";
+//         },
+//         unauthorizedResponse: () => {
+//             return { msg: "You are unathorized to access this" };
+//         },
+//     })
+// );
 
 //----------------BASICS-------------------------
 app.get("/", function (req, res) {
@@ -31,6 +50,9 @@ app.get("/name/:name1/:name2", function (req, res) {
 app.get("/form", function (req, res) {
     res.sendFile(path.join(__dirname, "form.html"));
 });
+
+app.post("/result", isAuthorized);
+
 app.post("/result", (req, res) => {
     console.log(req.body);
     let username = req.body.username;
@@ -86,7 +108,7 @@ app.post(
         check("email").isEmail().withMessage("To nie email").normalizeEmail(),
         check("age")
             .isInt({ min: 0, max: 110 })
-            .withMessage("Wiek powinnien być w przedziale 0 - 110"),
+            .withMessage("Wiek powinnien być liczbą w przedziale 0 - 110"),
     ],
     function (req, res) {
         const errors = validationResult(req);
@@ -103,58 +125,11 @@ app.post(
         );
     }
 );
+
 //--------------------BASIC API----------------------
-app.get("/api/users", (req, res) => {
-    res.json(users);
-});
+app.use("/api/users", apiRouter);
 
-app.get("/api/users/:id", (req, res) => {
-    const found = users.filter((user) => user.id === parseInt(req.params.id));
-    if (found.length !== 0) {
-        res.json(found);
-    } else {
-        res.status(400).json({
-            msg: `Użytkownik o id ${req.params.id} nie został odnaleziony`,
-        });
-    }
-});
-
-app.post("/api/users/create", (req, res) => {
-    const newUser = {
-        id: users.length + 1,
-        name: req.body.name,
-        email: req.body.email,
-        status: "aktywny",
-    };
-    if (!newUser.name || !newUser.email) {
-        return res
-            .status(400)
-            .json({ msg: "Wprowadź poprawne imię i nazwisko oraz email!" });
-    }
-    users.push(newUser);
-    res.json(users);
-});
-
-app.patch("/api/users/:id", (req, res) => {
-    const found = users.some((user) => user.id === parseInt(req.params.id));
-    if (found) {
-        const updUser = req.body;
-        users.forEach((user) => {
-            if (user.id === parseInt(req.params.id)) {
-                user.name = updUser.name ? updUser.name : user.name;
-                user.email = updUser.email ? updUser.email : user.email;
-                res.json({ msg: "Dane użytkownika zaktualizowane", user });
-            }
-        });
-    } else {
-        res.status(400).json({
-            msg: `Użytkownik o id ${req.params.id} nie istnieje!`,
-        });
-    }
-});
-
-//--------------------MIDDLEWARE--------------------------
-
+//---------------------START--------------------
 app.listen(PORT, () => {
     console.log("Serwer działa na http://localhost:3000");
 });
