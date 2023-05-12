@@ -5,8 +5,9 @@ import { dirname } from "path";
 import bodyParser from "body-parser";
 import { check, validationResult } from "express-validator";
 import apiRouter from "./api/routes.js";
-import metoda from "./middleware/metoda.js";
+import metoda, { ex16 } from "./middleware/metoda.js";
 import isAuthorized from "./middleware/autoryzacja.js";
+import getDate from "./server-files/getDate.js";
 import basicAuth from "express-basic-auth";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,10 +17,13 @@ const PORT = 3000;
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.set("view engine", "hbs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
 
 //--------------------MIDDLEWARE--------------------------
 
-app.use(metoda);
+app.use(ex16);
 
 //------------------AUTHORIZATION------------------------------
 // app.use(
@@ -120,9 +124,7 @@ app.post(
         let email = req.body.email;
         let age = req.body.age;
 
-        res.send(
-            `Użytkownik: ${username} <br /> Email: ${email} <br/> Wiek: ${age}`
-        );
+        res.render("info", { username, email, age });
     }
 );
 
@@ -131,5 +133,5 @@ app.use("/api/users", apiRouter);
 
 //---------------------START--------------------
 app.listen(PORT, () => {
-    console.log("Serwer działa na http://localhost:3000");
+    console.log(getDate() + " === Serwer zostaje uruchomiony na porcie 3000");
 });
