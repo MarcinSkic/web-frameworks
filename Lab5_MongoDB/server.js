@@ -3,10 +3,11 @@ const express = require("express");
 const path = require("path");
 const handleBars = require("handlebars");
 const exphbs = require("express-handlebars");
-const mongoose = require("mongoose");
+require("./db.js");
 const {
     allowInsecurePrototypeAccess,
 } = require("@handlebars/allow-prototype-access");
+const studentsRouter = require("./routes/student.js");
 
 const app = express();
 
@@ -18,27 +19,23 @@ app.use(
 );
 
 //-------------TEMPLATE ENGINE-------------------
-app.set("views", path.join(__dirname, "/"));
+const viewsPath = path.join(__dirname, "/views");
+app.set("views", viewsPath);
 app.engine(
     "hbs",
     exphbs.engine({
         handlebars: allowInsecurePrototypeAccess(handleBars),
         extname: "hbs",
         defaultLayout: "layout",
-        layoutsDir: __dirname,
+        layoutsDir: path.join(viewsPath, "/layouts"),
     })
 );
 app.set("view engine", "hbs");
 
 //----------------DATABASE------------------
-mongoose
-    .connect(process.env.MONGODB_CONNECTION, { useNewUrlParser: true })
-    .then((result) => {
-        console.log("Połączono z bazą");
-    })
-    .catch((err) => {
-        console.log("Nie można połączyć się z MongoDB. Błąd: " + err);
-    });
+
+//---------------ROUTES----------------------
+app.use("/", studentsRouter);
 
 //-------------------STARTUP---------------------
 app.listen(3000, () => {
