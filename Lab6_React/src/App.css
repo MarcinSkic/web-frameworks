@@ -48,3 +48,37 @@ body {
     align-self: center;
     flex: 0.3;
 }
+.add-list {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin-bottom: 20px;
+}
+.input-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    max-height: 30px;
+}
+.input-div label {
+    margin-right: 10px;
+}
+.input-div select,
+input {
+    padding: 5px;
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 6px;
+}
+.btn {
+    color: white;
+    background-color: #a17c6b;
+    border: transparent;
+    border-radius: 3px;
+    padding: 5px 0;
+    border-radius: 6px;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
